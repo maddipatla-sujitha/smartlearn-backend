@@ -21,7 +21,7 @@ public class PredictionService {
         body.put("assignment", request.getAssignment());
 
         String response = restTemplate.postForObject(
-                "http://localhost:5000/predict",
+        		"https://smartlearn-backend-1-etsn.onrender.com/predict",
                 body,
                 String.class
         );
