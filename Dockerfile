@@ -9,4 +9,4 @@ RUN ./mvnw clean install -Dmaven.test.skip=true
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/*.jar"]
+CMD ["sh", "-c", "java -jar target/*.jar"]
