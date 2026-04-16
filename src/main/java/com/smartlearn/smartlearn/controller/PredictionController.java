@@ -1,10 +1,12 @@
 package com.smartlearn.smartlearn.controller;
 
+import com.smartlearn.smartlearn.dto.PredictionRequest;
+import com.smartlearn.smartlearn.service.RecommendationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.smartlearn.smartlearn.dto.PredictionRequest;
-import com.smartlearn.smartlearn.service.PredictionService;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -12,11 +14,35 @@ import com.smartlearn.smartlearn.service.PredictionService;
 public class PredictionController {
 
     @Autowired
-    private PredictionService predictionService;
+    private RecommendationService recommendationService;
 
     @PostMapping("/predict")
-    public String predict(@RequestBody PredictionRequest request) {
+    public Map<String, Object> predict(@RequestBody PredictionRequest req) {
 
-        return predictionService.getPrediction(request);
+        double avg = (req.getAttendance() + req.getQuiz() + req.getAssignment()) / 3.0;
+
+        String grade;
+        String feedback;
+
+        if (avg >= 75) {
+            grade = "A";
+            feedback = "Excellent performance 🎉";
+        } else if (avg >= 60) {
+            grade = "B";
+            feedback = "Good, but can improve 👍";
+        } else {
+            grade = "C";
+            feedback = "Needs improvement ⚠️";
+        }
+
+        var recommendations =
+                recommendationService.getRecommendations(req.getSubject(), (int) avg);
+
+        return Map.of(
+                "grade", grade,
+                "average", avg,
+                "feedback", feedback,
+                "recommendations", recommendations
+        );
     }
 }
